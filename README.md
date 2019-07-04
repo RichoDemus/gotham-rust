@@ -9,4 +9,6 @@ docker build -t gotham-rust . && docker run -p 80:80 -it --rm --name gotham goth
 http localhost
 # or
 wrk -t12 -c400 -d60s http://127.0.0.1
+# or
+echo '{"msg":"Hello There!"}' | http localhost
 ```

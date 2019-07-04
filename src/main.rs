@@ -1,29 +1,30 @@
 //! A Hello World example application for working with Gotham.
 
+extern crate futures;
 extern crate gotham;
 extern crate hyper;
-extern crate futures;
+extern crate mime;
 extern crate serde_json;
 
 use futures::{future, Future, Stream};
-use gotham::state::{FromState, State};
 use gotham::handler::{HandlerFuture, IntoHandlerError};
-use gotham::helpers::http::response::create_empty_response;
+use gotham::helpers::http::response::{create_empty_response, create_response};
 use gotham::router::builder::{build_simple_router, DefineSingleRoute, DrawRoutes};
 use gotham::router::Router;
+use gotham::state::{FromState, State};
 use hyper::{Body, HeaderMap, Method, Response, StatusCode, Uri, Version};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 //const HELLO_WORLD: &'static str = "Hello World!";
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct HelloRequest {
-    pub msg:String
+    pub msg: String
 }
 
 #[derive(Deserialize, Serialize)]
 pub struct HelloResponse {
-    pub msg:String
+    pub msg: String
 }
 
 /// Extract the main elements of the request except for the `Body`
@@ -55,7 +56,15 @@ fn post_handler(mut state: State) -> Box<HandlerFuture> {
             Ok(valid_body) => {
                 let body_content = String::from_utf8(valid_body.to_vec()).unwrap();
                 println!("Body: {}", body_content);
-                let res = create_empty_response(&state, StatusCode::OK);
+                let deserialized: HelloRequest = serde_json::from_str(&body_content).unwrap();
+                println!("Deserialized body: {:?}", deserialized);
+                let resp = HelloResponse { msg: "General Kenobi".to_string() };
+                let res = create_response(
+                    &state,
+                    StatusCode::OK,
+                    mime::APPLICATION_JSON,
+                    serde_json::to_vec(&resp).unwrap(),
+                );
                 future::ok((state, res))
             }
             Err(e) => future::err((state, e.into_handler_error())),

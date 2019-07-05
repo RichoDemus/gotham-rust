@@ -1,5 +1,5 @@
 [package]
-name = "rust-rocket"
+name = "rust-gotham"
 version = "0.1.0"
 authors = ["Richard Tjerngren <rtjerngren@spotify.com>"]
 edition = "2018"

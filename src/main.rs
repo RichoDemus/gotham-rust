@@ -15,7 +15,6 @@ use gotham::state::{FromState, State};
 use hyper::{Body, HeaderMap, Method, Response, StatusCode, Uri, Version};
 use serde::{Deserialize, Serialize};
 
-//const HELLO_WORLD: &'static str = "Hello World!";
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct HelloRequest {
@@ -43,7 +42,6 @@ fn print_request_elements(state: &State) {
 fn get_handler(state: State) -> (State, Response<Body>) {
 //    print_request_elements(&state);
     let res = create_empty_response(&state, StatusCode::OK);
-
     (state, res)
 }
 
@@ -73,7 +71,6 @@ fn post_handler(mut state: State) -> Box<HandlerFuture> {
     Box::new(f)
 }
 
-/// Create a `Router`
 fn router() -> Router {
     build_simple_router(|route| {
         route.associate("/", |assoc| {
@@ -89,7 +86,6 @@ pub fn main() {
     println!("Listening for requests at http://{}", addr);
     gotham::start(addr, router())
 }
-
 /*
 #[cfg(test)]
 mod tests {
